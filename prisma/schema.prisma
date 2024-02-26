@@ -13,10 +13,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model movies {
-  k_id     String @id @unique
+model Movies {
+  k_id     String   @id @unique
   title    String
-  synopsis String @db.LongText
+  synopsis String   @db.LongText
   type     String
   seasons  Int
+  genres   Genres[]
+}
+
+model Genres {
+  id     Int      @id @default(autoincrement())
+  genre  String
+  movies Movies[]
 }

@@ -1,5 +1,10 @@
 import { Request, Response } from "express";
-import { createKdramaService, deleteKdramaService, getAllKdramaService, updateKdramaService } from "../services/KDramaService"
+import { 
+    createKdramaService, 
+    deleteKdramaService, 
+    getAllKdramaService, 
+    updateKdramaService 
+} from "../services/KDramaService"
 
 export const createKdramaController = async (req: Request, res: Response) => {
     try {
@@ -7,8 +12,8 @@ export const createKdramaController = async (req: Request, res: Response) => {
             return res.status(400).json({ error: 'Request body cannot be empty.' });
         }
 
-        const { title, synopsis, type, seasons } = req.body;
-        const result = await createKdramaService(title, synopsis, type, seasons);
+        const { title, synopsis, type, seasons, genres } = req.body;
+        const result = await createKdramaService(title, synopsis, type, seasons, genres);
 
         res.status(200).json({
             method: "successfull",
@@ -25,9 +30,9 @@ export const updateKdramaController = async (req: Request, res: Response) => {
             return res.status(400).json({ error: 'Request params cannot be empty.' });
         }
         const { k_id } = req.params;
-        const { title, type, seasons }: { title: string, type: string, seasons: number } = req.body;
+        const { title, type, seasons, synopsis, genres } = req.body;
 
-        const result = await updateKdramaService(k_id, title, type, seasons);
+        const result = await updateKdramaService(k_id, title, type, seasons, synopsis, genres);
 
         res.status(200).json({
             method: 'successfull',
@@ -59,8 +64,15 @@ export const deleteKdramaController = async (req: Request, res: Response) => {
 
 export const getAllKdramaController = async (req: Request, res: Response) => {
     try {
-        const movies = await getAllKdramaService()
-        res.status(200).json({ data: movies });
+        const result = await getAllKdramaService()
+        const formattedResult = result.map(movie => ({
+            title: movie.title,
+            type: movie.type,
+            synopsis: movie.synopsis,
+            seasons: movie.seasons,
+            genres: movie.genres.map(genre => ({ genre: genre.genre }))
+        }));
+        res.status(200).json({ data: formattedResult });
     } catch (error) {
         res.status(500).json({ error: 'METHOD GET : Failed.' });
     }
