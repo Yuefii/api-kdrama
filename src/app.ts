@@ -19,7 +19,7 @@ app.get("/ping", (req: Request, res: Response) => {
     })
 })
 
-app.get("*", (req: Request, res: Response) => {
+app.get("/", (req: Request, res: Response) => {
     res.status(200).json({
         "author": "yuefii",
         "github_author": "https://github.com/yuefii",
