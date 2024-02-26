@@ -1,6 +1,6 @@
 import prisma from "../libs/prisma";
 
-export const createKdramaService = async (title: string, type: string, seasons: number) => {
+export const createKdramaService = async (title: string, synopsis: string, type: string, seasons: number) => {
     const totalMovies = await prisma.movies.count();
     const formattedId = String(totalMovies + 1).padStart(4, '0');
 
@@ -8,6 +8,7 @@ export const createKdramaService = async (title: string, type: string, seasons: 
         data: {
             k_id: formattedId,
             title,
+            synopsis,
             type,
             seasons: Number(seasons),
         }
@@ -27,7 +28,7 @@ export const updateKdramaService = async (k_id: string, title: string, type: str
     });
 };
 
-export const deleteKdramaService = async (k_id:string) => {
+export const deleteKdramaService = async (k_id: string) => {
     return await prisma.movies.delete({
         where: {
             k_id: k_id,

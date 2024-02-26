@@ -7,8 +7,8 @@ export const createKdramaController = async (req: Request, res: Response) => {
             return res.status(400).json({ error: 'Request body cannot be empty.' });
         }
 
-        const { title, type, seasons } = req.body;
-        const result = await createKdramaService(title, type, seasons);
+        const { title, synopsis, type, seasons } = req.body;
+        const result = await createKdramaService(title, synopsis, type, seasons);
 
         res.status(200).json({
             method: "successfull",

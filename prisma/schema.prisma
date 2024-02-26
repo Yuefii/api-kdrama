@@ -14,8 +14,9 @@ datasource db {
 }
 
 model movies {
-  k_id    String @id @unique
-  title   String
-  type    String
-  seasons Int
+  k_id     String @id @unique
+  title    String
+  synopsis String @db.LongText
+  type     String
+  seasons  Int
 }
