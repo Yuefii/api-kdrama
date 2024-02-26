@@ -1,3 +1,4 @@
+import path from 'path';
 import prisma from "../libs/prisma";
 
 export const createKdramaService = async (
@@ -48,6 +49,20 @@ export const updateKdramaService = async (
     });
 };
 
+export const uploadImageUrlKdramaService = async (
+    k_id: string,
+    fileName: string) => {
+
+    return await prisma.movies.update({
+        where: {
+            k_id: k_id,
+        },
+        data: {
+            imageUrl: fileName
+        },
+    });
+};
+
 export const deleteKdramaService = async (k_id: string) => {
     return await prisma.movies.delete({
         where: {
@@ -62,4 +77,9 @@ export const getAllKdramaService = async () => {
             genres: true
         }
     });
+};
+
+export const getImageUrlService = (imageUrl: string) => {
+    const imagePath = path.join(__dirname, '../../', 'images', imageUrl);
+    return imagePath;
 };

@@ -1,10 +1,19 @@
+import path from "path";
+import dotenv from 'dotenv';
 import { Request, Response } from "express";
-import { 
-    createKdramaService, 
-    deleteKdramaService, 
-    getAllKdramaService, 
-    updateKdramaService 
+import { v4 as uuidv4 } from 'uuid';
+import { UploadedFile } from 'express-fileupload';
+import {
+    createKdramaService,
+    deleteKdramaService,
+    getAllKdramaService,
+    getImageUrlService,
+    updateKdramaService,
+    uploadImageUrlKdramaService
 } from "../services/KDramaService"
+
+dotenv.config();
+const baseUrl = process.env.BASE_URL + 'images/';
 
 export const createKdramaController = async (req: Request, res: Response) => {
     try {
@@ -43,6 +52,40 @@ export const updateKdramaController = async (req: Request, res: Response) => {
     }
 };
 
+export const uploadImageUrlKdramaController = async (req: Request, res: Response) => {
+    try {
+        if (!req.files || !req.files.imageUrl) {
+            return res.status(400).json({ error: 'No files uploaded.' });
+        }
+
+        if (!req.params) {
+            return res.status(400).json({ error: 'Request params cannot be empty.' });
+        }
+        
+        const { k_id } = req.params;
+        const imageUrl = req.files.imageUrl as UploadedFile;
+        const fileName = uuidv4() + path.extname(imageUrl.name);
+
+        imageUrl.mv(path.join(__dirname, '../../', 'images', fileName), async (err) => {
+            if (err) {
+                return res.status(500).json({ error: err });
+            }
+
+            try {
+                await uploadImageUrlKdramaService(k_id, fileName)
+                res.status(200).json({
+                    method: "successfull",
+                    imageUrl: baseUrl + fileName
+                });
+            } catch (error) {
+                res.status(500).json({ error: 'METODE POST: Failed.' });
+            }
+        });
+    } catch (error) {
+        res.status(500).json({ error: 'METHOD PATCH: Failed.' });
+    }
+};
+
 export const deleteKdramaController = async (req: Request, res: Response) => {
     try {
         if (!req.params) {
@@ -65,15 +108,23 @@ export const deleteKdramaController = async (req: Request, res: Response) => {
 export const getAllKdramaController = async (req: Request, res: Response) => {
     try {
         const result = await getAllKdramaService()
-        const formattedResult = result.map(movie => ({
-            title: movie.title,
-            type: movie.type,
-            synopsis: movie.synopsis,
-            seasons: movie.seasons,
-            genres: movie.genres.map(genre => ({ genre: genre.genre }))
+        const formattedResult = result.map(kdrama => ({
+            title: kdrama.title,
+            type: kdrama.type,
+            synopsis: kdrama.synopsis,
+            seasons: kdrama.seasons,
+            imageUrl: baseUrl + kdrama.imageUrl,
+            genres: kdrama.genres.map(genre => ({ genre: genre.genre }))
         }));
         res.status(200).json({ data: formattedResult });
     } catch (error) {
         res.status(500).json({ error: 'METHOD GET : Failed.' });
     }
+};
+
+export const getImageController = (req: Request, res: Response) => {
+    const imageUrl = req.params.imageUrl;
+    const imagePath = getImageUrlService(imageUrl)
+
+    res.sendFile(imagePath);
 };

@@ -19,6 +19,7 @@ model Movies {
   synopsis String   @db.LongText
   type     String
   seasons  Int
+  imageUrl String?
   genres   Genres[]
 }
 
