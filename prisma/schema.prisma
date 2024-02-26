@@ -12,3 +12,10 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+model movies {
+  k_id    String @id @unique
+  title   String
+  type    String
+  seasons Int
+}
