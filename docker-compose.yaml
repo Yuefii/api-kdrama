@@ -1,0 +1,37 @@
+version: '3'
+services:
+  mysql:
+    image: 'mysql:latest'
+    container_name: k-drama
+    ports:
+      - '3306:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: k-drama
+      MYSQL_DATABASE: k-drama
+      MYSQL_USER: k-drama
+      MYSQL_PASSWORD: k-drama
+    networks:
+      - 'database-net'
+    volumes:
+      - ./data:/var/lib/mysql
+
+  adminer:
+    image: 'adminer'
+    ports:
+      - '8081:8080'
+    networks:
+      - 'database-net'
+
+# AKTIFKAN JIKA KAMU MENJALANKANNYA LEWAT DOCKER COMPOSE
+
+  # rest-api:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - '8080:8080'
+  #   networks:
+  #     - 'database-net'
+
+networks:
+  database-net:
