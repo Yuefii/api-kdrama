@@ -22,16 +22,14 @@ services:
     networks:
       - 'database-net'
 
-# AKTIFKAN JIKA KAMU MENJALANKANNYA LEWAT DOCKER COMPOSE
-
-  # rest-api:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - '8080:8080'
-  #   networks:
-  #     - 'database-net'
+  rest-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '8080:8080'
+    networks:
+      - 'database-net'
 
 networks:
   database-net:
