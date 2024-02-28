@@ -83,3 +83,20 @@ export const getImageUrlService = (imageUrl: string) => {
     const imagePath = path.join(__dirname, '../../', 'images', imageUrl);
     return imagePath;
 };
+
+export const getBySearchService = async (keyword: any) => {
+    let searchData;
+    if (keyword) {
+        searchData = await prisma.movies.findMany({
+            where: {
+                OR: [
+                    { title: { contains: keyword } },
+                    { synopsis: { contains: keyword } }
+                ]
+            }
+        });
+    } else {
+        throw new Error('Missing search criteria');
+    }
+    return searchData;
+}

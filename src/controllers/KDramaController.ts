@@ -7,6 +7,7 @@ import {
     createKdramaService,
     deleteKdramaService,
     getAllKdramaService,
+    getBySearchService,
     getImageUrlService,
     updateKdramaService,
     uploadImageUrlKdramaService
@@ -61,7 +62,7 @@ export const uploadImageUrlKdramaController = async (req: Request, res: Response
         if (!req.params) {
             return res.status(400).json({ error: 'Request params cannot be empty.' });
         }
-        
+
         const { k_id } = req.params;
         const imageUrl = req.files.imageUrl as UploadedFile;
         const fileName = uuidv4() + path.extname(imageUrl.name);
@@ -127,4 +128,14 @@ export const getImageController = (req: Request, res: Response) => {
     const imagePath = getImageUrlService(imageUrl)
 
     res.sendFile(imagePath);
+};
+
+export const getBySearchController = async (req: Request, res: Response) => {
+    const { keyword } = req.query;
+    try {
+        const searchData = await getBySearchService(keyword);
+        res.json(searchData);
+    } catch (error) {
+        res.status(500).json({ error: 'METHOD GET : Failed.' });
+    }
 };
